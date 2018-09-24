@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Dmytro Zuienko](https://up.htmlacademy.ru/nodejs/2/user/833179).
-* Наставник: `Неизвестно`.
+* Наставник: [Никита Ткачук](https://up.htmlacademy.ru/nodejs/2/user/450211).
 
 ---
 
