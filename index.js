@@ -7,7 +7,7 @@ const commandData = {
 if (!input) {
   console.log('Привет пользователь!\nЭта программа будет запускать сервер «Кекстаграмм».\nАвтор: Кекс.');
   process.exit(0);
-} else if (commandData.input) {
+} else if (commandData[input]) {
   console.log(commandData[input]);
   process.exit(0);
 }
