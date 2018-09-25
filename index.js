@@ -84,9 +84,9 @@ class Kekstagram {
         ...commands,
         [currentCommand[0]]: currentCommand[1],
       }), {});
-    const isCurrentCommandKnown = Boolean(Object.values(nonUtilityCommands)
+    const isCurrentCommandKnown = Object.values(nonUtilityCommands)
       .map(command => getCommandFlag(command.name))
-      .includes(currentCommandFlag));
+      .includes(currentCommandFlag);
     const commandTypeConditions = {
       [COMMAND_TYPE_ABSENT]: !currentCommandFlag,
       [COMMAND_TYPE_UNKNOWN]: currentCommandFlag && !isCurrentCommandKnown,
