@@ -24,11 +24,6 @@ class Kekstagram {
       version: '1.0.0',
     };
 
-    this.symbols = {
-      [COMMAND_TYPE_ABSENT]: Symbol(COMMAND_TYPE_ABSENT),
-      [COMMAND_TYPE_UNKNOWN]: Symbol(COMMAND_TYPE_UNKNOWN),
-    };
-
     this.commandInfo = {
       help: {
         name: 'help',
@@ -44,19 +39,21 @@ class Kekstagram {
         message: () => `v${this.projectInfo.version}`,
         exitCode: SUCCESS_CODE,
       },
-      [this.symbols[COMMAND_TYPE_ABSENT]]: {
+      [COMMAND_TYPE_ABSENT]: {
         message: () => (
           `Привет пользователь!${LF
           }Эта программа будет запускать сервер «${this.projectInfo.name}».${LF
           }Автор: ${this.projectInfo.author}.`),
         exitCode: SUCCESS_CODE,
+        isUtilityCommand: true,
       },
-      [this.symbols[COMMAND_TYPE_UNKNOWN]]: (commandName) => ({
-        message: () => (
+      [COMMAND_TYPE_UNKNOWN]: {
+        message: commandName => (
           `Неизвестная команда ${commandName}.${LF
           }Чтобы прочитать правила использования приложения, наберите "${getCommandFlag(this.commandInfo.help.name)}"`),
         exitCode: ERROR_CODE,
-      }),
+        isUtilityCommand: true,
+      },
     };
 
     this.output = this.getOutput(this.input);
@@ -65,6 +62,7 @@ class Kekstagram {
 
   getCommandDescription(commandsInfo) {
     const commands = Object.values(commandsInfo)
+      .filter(command => !command.isUtilityCommand)
       .map(command => ({
         flag: getCommandFlag(command.name),
         description: command.description,
@@ -80,8 +78,15 @@ class Kekstagram {
 
   getOutput(input) {
     const currentCommandFlag = getCurrentCommandFlag(input);
-    const isCurrentCommandKnown = Boolean(Object.values(this.commandInfo)
-      .find(command => getCommandFlag(command.name) === currentCommandFlag));
+    const nonUtilityCommands = Object.entries(this.commandInfo)
+      .filter(entry => !entry[1].isUtilityCommand)
+      .reduce((commands, currentCommand) => ({
+        ...commands,
+        [currentCommand[0]]: currentCommand[1],
+      }), {});
+    const isCurrentCommandKnown = Boolean(Object.values(nonUtilityCommands)
+      .map(command => getCommandFlag(command.name))
+      .includes(currentCommandFlag));
     const commandTypeConditions = {
       [COMMAND_TYPE_ABSENT]: !currentCommandFlag,
       [COMMAND_TYPE_UNKNOWN]: currentCommandFlag && !isCurrentCommandKnown,
@@ -92,14 +97,14 @@ class Kekstagram {
     const currentCommandName = isCurrentCommandKnown && getCommandName(currentCommandFlag);
     const currentCommandKey = currentCommandType === COMMAND_TYPE_KNOWN
       ? currentCommandName
-      : this.symbols[currentCommandType];
-    const currentCommandInfo = currentCommandType === COMMAND_TYPE_UNKNOWN
-      ? this.commandInfo[currentCommandKey](currentCommandFlag)
-      : this.commandInfo[currentCommandKey];
+      : currentCommandType;
+    const currentCommandInfo = this.commandInfo[currentCommandKey];
 
     return {
       exitCode: currentCommandInfo.exitCode,
-      message: currentCommandInfo.message(),
+      message: currentCommandType === COMMAND_TYPE_UNKNOWN
+        ? currentCommandInfo.message(currentCommandFlag)
+        : currentCommandInfo.message(),
     };
   }
 
