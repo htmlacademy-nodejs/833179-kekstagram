@@ -7,6 +7,14 @@
     "test:lint": "eslint .",
     "test": "npm run test:lint"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DimaZuien/833179-kekstagram.git"
@@ -19,6 +27,8 @@
   "homepage": "https://github.com/DimaZuien/833179-kekstagram#readme",
   "devDependencies": {
     "eslint": "5.6.1",
-    "eslint-config-htmlacademy": "0.5.2"
+    "eslint-config-htmlacademy": "0.5.2",
+    "husky": "1.0.0",
+    "lint-staged": "7.3.0"
   }
 }
