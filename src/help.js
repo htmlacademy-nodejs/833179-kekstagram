@@ -1,5 +1,7 @@
 'use strict';
 
+const colors = require(`colors`);
+
 const author = require(`./author`);
 const description = require(`./description`);
 const license = require(`./license`);
@@ -24,8 +26,8 @@ const commandData = {
 const getCommandDescription = (commandInfo) => {
   const commands = Object.values(commandInfo)
     .map((command) => ({
-      flag: `--${command.name}`,
-      description: command.description,
+      flag: colors.grey(`--${command.name}`),
+      description: colors.green(command.description),
     }));
   const commandFlags = commands.map((command) => command.flag);
   const commandFlagLength = commandFlags.map((commandFlag) => commandFlag.length);
