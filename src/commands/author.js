@@ -2,7 +2,7 @@
 
 const colors = require(`colors`);
 
-const packageInfo = require(`../package.json`);
+const packageInfo = require(`../../package.json`);
 
 const author = {
   name: `author`,
