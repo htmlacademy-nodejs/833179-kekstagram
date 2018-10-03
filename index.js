@@ -1,7 +1,7 @@
 'use strict';
 
 const packageInfo = require(`./package.json`);
-const commandData = require(`./src/index`);
+const commandData = require(`./src/commands/index`);
 
 const input = process.argv[2];
 const isFlag = (command) => command && command.substring(0, 2) === `--`;
