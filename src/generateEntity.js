@@ -41,7 +41,7 @@ const getComments = () => {
       generateEntitySettings.COMMENTS_ELEMENT_MAX
   );
 
-  return [...(new Array(commentsAmount))]
+  return utils.newArray(commentsAmount)
     .map(() => getRandomText(2, generateEntitySettings.COMMENTS_STRING_MAX));
 };
 
