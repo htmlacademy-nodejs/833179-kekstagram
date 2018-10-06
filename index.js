@@ -1,14 +1,14 @@
 'use strict';
 
 const commandData = require(`./src/commands/index`);
-const generateEntityReadline = require(`./src/generateEntityReadline`);
+const generateEntity = require(`./src/generateEntityReadline`).askToGenerateEntityHandler;
 
 const input = process.argv[2];
 const isFlag = (command) => command && command.substring(0, 2) === `--`;
 const formatFlagToCommand = (command) => command.substr(2);
 
 if (!input) {
-  generateEntityReadline();
+  generateEntity();
 } else if (isFlag(input) && commandData[formatFlagToCommand(input)]) {
   commandData[formatFlagToCommand(input)].execute();
   process.exit(0);

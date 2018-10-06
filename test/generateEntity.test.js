@@ -4,7 +4,7 @@ const assert = require(`assert`);
 
 const validUrl = require(`valid-url`);
 
-const utils = require(`../src/utils.js`);
+const {removeDupicateStringsFromArray} = require(`../src/utils.js`);
 
 const generateEntity = require(`../src/generateEntity`);
 const generateEntitySettings = require(`./../src/generateEntitySettings`);
@@ -59,7 +59,7 @@ describe(`generateEntity`, () => {
     });
     it(`should contain non-repeating words`, () => {
       assert.ok(currentEntity.hashtags
-        .filter(utils.removeDupicateStringsFromArray).length === currentEntity.hashtags.length);
+        .filter(removeDupicateStringsFromArray).length === currentEntity.hashtags.length);
     });
     it(`should contain words with limited amount of characters`, () => {
       assert.ok(currentEntity.hashtags.every(isLengthInRange(generateEntitySettings.HASHTAG_STRING_MAX)));

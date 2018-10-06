@@ -1,87 +1,106 @@
 'use strict';
 
-const fs = require(`fs`);
 const path = require(`path`);
 
-const utils = require(`./utils`);
+const {
+  askClosedQuestion,
+  closeRl,
+  doesFileExist,
+  isDirectoryAccessible,
+  newArray,
+  rlp,
+  writeFile,
+} = require(`./utils`);
 const generateEntity = require(`./generateEntity`);
 
-const askToGenerateEntity =
-  () => utils.askClosedQuestion(`Привет пользователь!\nХотите получить сгенерированные данные? [Y/n]\n`)()
+const askToGenerateEntityHandler =
+  (...args) => askToGenerateEntity(...args)
     .then(
-        askAmountOfEntities,
-        () => {
-          console.log(`Bye`);
-          utils.rl.close();
-        }
+        askAmountOfEntitiesHandler,
+        closeRl(`Bye`)
+    );
+
+const askToGenerateEntity =
+  () => askClosedQuestion(`Привет пользователь!\nХотите получить сгенерированные данные? [Y/n]\n`);
+
+const askAmountOfEntitiesHandler =
+  (...args) => askAmountOfEntities(...args)
+    .then(
+        askFileNameHandler,
+        () => askAmountOfEntitiesHandler(true)
     );
 
 const askAmountOfEntities =
-  (input, isInvalidResponse = false) => new Promise((resolve, reject) => {
-    utils.rl.question(
-        !isInvalidResponse ? `Сколько элементов создать?\n` : `Не понимаю, нужно число.\n`,
-        (entityCount) => {
-          if (Number.isNaN(Number(entityCount))) {
-            reject();
-            return;
-          }
+  (isInvalidResponse = false) => rlp(
+      !isInvalidResponse ? `Сколько элементов создать?\n` : `Не понимаю, нужно натуральное число.\n`,
+      askAmountOfEntitiesCb,
+  );
 
-          resolve({entityCount});
-        }
-    );
-  })
-    .then(
-        askPathToSave,
-        (response) => askAmountOfEntities(response, true)
-    );
+const askAmountOfEntitiesCb =
+  (resolve, reject) => (entityCount) => Number.isInteger(Number(entityCount)) && Number(entityCount) > 0
+    ? resolve({entityCount})
+    : reject();
 
-const askPathToSave =
-  (data, isInvalidResponse = false) => new Promise((resolve, reject) => {
-    utils.rl.question(
-        !isInvalidResponse
-          ? `Укажите путь к файлу, в который необходимо сохранить сгенерированные данные\n`
-          : `Невозможно создать файл, укажите другой путь\n`,
-        (pathName) => {
-          if (!utils.isDirectoryAccessible(path.dirname(pathName))) {
-            reject(data);
-            return;
-          } else if (fs.existsSync(pathName) && fs.lstatSync(pathName).isFile()) {
-            resolve(Object.assign(data, {pathName, isExistingFile: true}));
-            return;
-          }
-
-          resolve(Object.assign(data, {pathName}));
-        }
-    );
-  })
+const askFileNameHandler =
+  (...args) => askFileName(...args)
     .then(
         (response) => response.isExistingFile
-          ? askToRewriteExistingFile(response)
-          : writeGeneretedDataToFile(response),
-        (response) => askPathToSave(response, true)
+          ? askToRewriteExistingFileHandler(response)
+          : writeGeneretedDataToFileHandler(response),
+        (response) => askFileNameHandler(response, true),
+    );
+
+const askFileName =
+  (data, isInvalidResponse = false) => rlp(
+      !isInvalidResponse
+        ? `Укажите путь к файлу, в который необходимо сохранить сгенерированные данные\n`
+        : `Невозможно создать файл, укажите другой путь\n`,
+      askFileNameCb(data),
+  );
+
+const askFileNameCb =
+  (data) => (resolve, reject) => (fileName) => isDirectoryAccessible(path.dirname(fileName))
+    ? resolve(Object.assign(
+        {},
+        data,
+        {
+          fileName,
+          isExistingFile: doesFileExist(fileName)
+        }
+    ))
+    : reject(data);
+
+const askToRewriteExistingFileHandler =
+  (...args) => askToRewriteExistingFile(...args)
+    .then(
+        (response) => writeGeneretedDataToFileHandler(response),
+        (response) => askFileNameHandler(response),
     );
 
 const askToRewriteExistingFile =
-  (data) => utils.askClosedQuestion(`По указанному пути уже есть файл, перезаписать его? [Y/n]\n`)(data)
+  (data) => askClosedQuestion(`По указанному пути уже есть файл, перезаписать его? [Y/n]\n`, data);
+
+const writeGeneretedDataToFileHandler =
+  (...args) => writeGeneretedDataToFile(...args)
     .then(
-        (response) => writeGeneretedDataToFile(response),
-        (response) => askPathToSave(response)
+        closeRl(`Файл сохранён успешно!`),
+        (response) => askFileNameHandler(response, true),
     );
 
 const writeGeneretedDataToFile =
-  (data) => new Promise((resolve, reject) => {
-    const generatedData = JSON.stringify(utils.newArray(Number(data.entityCount)).map(() => generateEntity()));
+  (data) => writeFile(
+      data.fileName,
+      JSON.stringify(newArray(Number(data.entityCount)).map(() => generateEntity())),
+      data
+  );
 
-    fs.writeFile(data.pathName, generatedData, (err) => {
-      if (err) {
-        reject(data);
-        return;
-      }
-
-      console.log(`Файл сохранён успешно!`);
-      utils.rl.close();
-    });
-  })
-    .catch((response) => askPathToSave(response, true));
-
-module.exports = () => askToGenerateEntity();
+module.exports = {
+  askAmountOfEntitiesCb,
+  askAmountOfEntitiesHandler,
+  askFileNameCb,
+  askFileNameHandler,
+  askToGenerateEntityHandler,
+  askToRewriteExistingFileHandler,
+  writeGeneretedDataToFile,
+  writeGeneretedDataToFileHandler,
+};
