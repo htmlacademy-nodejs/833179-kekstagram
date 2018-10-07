@@ -2,9 +2,23 @@
 
 const loremIpsum = require(`lorem-ipsum`).loremIpsum;
 
-const utils = require(`../src/utils.js`);
-
-const generateEntitySettings = require(`./generateEntitySettings`);
+const {newArray, removeDupicateStringsFromArray} = require(`../src/utils.js`);
+const {
+  COMMENTS_ELEMENT_MAX,
+  COMMENTS_ELEMENT_MIN,
+  COMMENTS_STRING_MAX,
+  DATE_MAX,
+  DATE_MIN,
+  DESCRIPTION_MAX,
+  EFFECT_VALUES,
+  HASHTAG_ELEMENT_MAX,
+  HASHTAG_ELEMENT_MIN,
+  HASHTAG_STRING_MAX,
+  LIKES_MAX,
+  LIKES_MIN,
+  SCALE_MAX,
+  SCALE_MIN,
+} = require(`./generateEntitySettings`);
 
 const getRandomNumber = (from, to) => Math.floor(Math.random() * (to - from)) + from;
 const getRandomText = (sentencesCount, characterLimit) => {
@@ -19,10 +33,7 @@ const getRandomText = (sentencesCount, characterLimit) => {
 };
 
 const getHashTags = () => {
-  const hashtagAmount = getRandomNumber(
-      generateEntitySettings.HASHTAG_ELEMENT_MIN,
-      generateEntitySettings.HASHTAG_ELEMENT_MAX
-  );
+  const hashtagAmount = getRandomNumber(HASHTAG_ELEMENT_MIN, HASHTAG_ELEMENT_MAX);
 
   return !hashtagAmount
     ? []
@@ -31,27 +42,24 @@ const getHashTags = () => {
       units: `words`,
     })
       .split(` `)
-      .filter(utils.removeDupicateStringsFromArray)
-      .filter((word) => word.length <= generateEntitySettings.HASHTAG_STRING_MAX)
+      .filter(removeDupicateStringsFromArray)
+      .filter((word) => word.length <= HASHTAG_STRING_MAX)
       .map((word) => word.substr(0, 1) === `#` ? word : `#${word}`);
 };
 const getComments = () => {
-  const commentsAmount = getRandomNumber(
-      generateEntitySettings.COMMENTS_ELEMENT_MIN,
-      generateEntitySettings.COMMENTS_ELEMENT_MAX
-  );
+  const commentsAmount = getRandomNumber(COMMENTS_ELEMENT_MIN, COMMENTS_ELEMENT_MAX);
 
-  return [...(new Array(commentsAmount))]
-    .map(() => getRandomText(2, generateEntitySettings.COMMENTS_STRING_MAX));
+  return newArray(commentsAmount)
+    .map(() => getRandomText(2, COMMENTS_STRING_MAX));
 };
 
 module.exports = () => ({
   url: `https://picsum.photos/600/?random`,
-  scale: getRandomNumber(generateEntitySettings.SCALE_MIN, generateEntitySettings.SCALE_MAX),
-  effect: generateEntitySettings.EFFECT_VALUES[getRandomNumber(0, generateEntitySettings.EFFECT_VALUES.length)],
+  scale: getRandomNumber(SCALE_MIN, SCALE_MAX),
+  effect: EFFECT_VALUES[getRandomNumber(0, EFFECT_VALUES.length)],
   hashtags: getHashTags(),
-  description: getRandomText(2, generateEntitySettings.DESCRIPTION_MAX),
-  likes: getRandomNumber(generateEntitySettings.LIKES_MIN, generateEntitySettings.LIKES_MAX),
+  description: getRandomText(2, DESCRIPTION_MAX),
+  likes: getRandomNumber(LIKES_MIN, LIKES_MAX),
   comments: getComments(),
-  date: getRandomNumber(generateEntitySettings.DATE_MIN, generateEntitySettings.DATE_MAX),
+  date: getRandomNumber(DATE_MIN, DATE_MAX),
 });
