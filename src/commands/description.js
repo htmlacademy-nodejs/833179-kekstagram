@@ -9,6 +9,7 @@ const description = {
   description: `печатает описание приложения`,
   execute() {
     console.log(colors.rainbow(packageInfo.description));
+    process.exit(0);
   }
 };
 

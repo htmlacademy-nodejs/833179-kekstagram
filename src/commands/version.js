@@ -10,6 +10,7 @@ const version = {
   description: `печатает версию приложения`,
   execute() {
     console.log(`v${colors.red(majorVersion)}.${colors.green(minorVersion)}.${colors.blue(patchVersion)}`);
+    process.exit(0);
   }
 };
 

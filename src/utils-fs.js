@@ -3,6 +3,15 @@
 const fs = require(`fs`);
 const {promisify} = require(`util`);
 
+const contentTypes = {
+  css: `text/css`,
+  html: `text/html; charset=UTF-8`,
+  jpg: `image/jpeg`,
+  png: `image/png`,
+  gif: `image/gif`,
+  ico: `image/x-icon`,
+};
+
 const isDirectoryAccessible = (dirName) => {
   try {
     fs.accessSync(dirName, fs.constants.F_OK | fs.constants.W_OK | fs.constants.R_OK);
@@ -31,6 +40,7 @@ const unlinkFile =
   ));
 
 module.exports = {
+  contentTypes,
   doesFileExist,
   isDirectoryAccessible,
   readFile,

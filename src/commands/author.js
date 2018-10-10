@@ -9,6 +9,7 @@ const author = {
   description: `печатает имя автора приложения`,
   execute() {
     console.log(colors.bold(packageInfo.author));
+    process.exit(0);
   }
 };
 

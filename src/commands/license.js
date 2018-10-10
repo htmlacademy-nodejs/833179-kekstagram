@@ -9,6 +9,7 @@ const license = {
   description: `печатает лицензию приложения`,
   execute() {
     console.log(colors.bgWhite.red(packageInfo.license));
+    process.exit(0);
   }
 };
 

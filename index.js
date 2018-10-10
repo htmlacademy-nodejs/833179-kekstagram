@@ -11,7 +11,6 @@ if (!input) {
   generateEntity();
 } else if (isFlag(input) && commandData[formatFlagToCommand(input)]) {
   commandData[formatFlagToCommand(input)].execute();
-  process.exit(0);
 } else {
   console.log(`Неизвестная команда ${input}. Для использования приложения используйте команды:`);
   commandData.help.execute();

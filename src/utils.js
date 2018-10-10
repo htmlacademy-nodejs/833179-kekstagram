@@ -1,6 +1,7 @@
 'use strict';
 
 const {
+  contentTypes,
   doesFileExist,
   isDirectoryAccessible,
   readFile,
@@ -22,6 +23,7 @@ module.exports = {
   askClosedQuestion,
   askClosedQuestionCb,
   closeRl,
+  contentTypes,
   doesFileExist,
   isDirectoryAccessible,
   newArray,
