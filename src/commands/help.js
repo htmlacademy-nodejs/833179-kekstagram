@@ -5,6 +5,7 @@ const colors = require(`colors`);
 const author = require(`./author`);
 const description = require(`./description`);
 const license = require(`./license`);
+const server = require(`./server`);
 const version = require(`./version`);
 
 const help = {
@@ -12,6 +13,7 @@ const help = {
   description: `печатает этот текст`,
   execute() {
     console.log(getCommandDescription(commandData));
+    process.exit(0);
   }
 };
 
@@ -20,6 +22,7 @@ const commandData = {
   description,
   help,
   license,
+  server,
   version,
 };
 
