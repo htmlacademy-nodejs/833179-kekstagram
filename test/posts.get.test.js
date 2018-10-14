@@ -8,9 +8,11 @@ const {app} = require(`../app`);
 const generateEntity = require(`../src/generateEntity`);
 
 const {
-  ENTITY_LENGTH,
+  DATE_MIN,
+  DATE_MAX,
   DEFAULT_LIMIT,
   DEFAULT_SKIP,
+  ENTITY_LENGTH,
 } = require(`../src/posts/settings`);
 
 const {
@@ -129,14 +131,26 @@ describe(`GET /api/posts`, () => {
 
       assert.deepEqual(allPosts.body[index], response.body);
     });
-    it(`should get response code with bad request if date is invalid`, () => {
+    it(`should get response code with 400 if date is invalid`, () => {
       return request(app)
         .get(`/api/posts/invalidDateFormat`)
         .expect(CODE_BAD_REQUEST);
     });
-    it(`should get response code with bad request if date is invalid`, () => {
+    it(`should get response code with 400 if date is less than DATE_MIN`, () => {
       return request(app)
-        .get(`/api/posts/1`)
+        .get(`/api/posts/${DATE_MIN - 1}`)
+        .expect(CODE_BAD_REQUEST);
+    });
+    it(`should get response code with 400 if date is more than DATE_MAX`, () => {
+      return request(app)
+        .get(`/api/posts/${DATE_MAX + 1}`)
+        .expect(CODE_BAD_REQUEST);
+    });
+    it(`should get response code with 404 if there is no an entity with such a date`, async () => {
+      const allPosts = await request(app).get(`/api/posts`);
+
+      return request(app)
+        .get(`/api/posts/${allPosts.body[0].date - 1}`) // actually it may fail, but probability is very low
         .expect(CODE_NOT_FOUND);
     });
   });

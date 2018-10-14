@@ -7,8 +7,8 @@ const multer = require(`multer`);
 const postRouter = new Router();
 const upload = multer();
 
-const BadRequestError = require(`../errors/BadRequestError`);
-const NotFoundError = require(`../errors/NotFoundError`);
+const getValidationHandler = require(`./getValidationHandler`);
+const postValidationHandler = require(`./postValidationHandler`);
 
 const {
   ENTITY_LENGTH,
@@ -39,31 +39,14 @@ postRouter.get(``, (req, res) => {
 
 postRouter.get(`/:date`, asyncHandler(async (req, res) => {
   const date = req.params.date;
-  const entity = posts.find((item) => item.date === Number(date));
 
-  if (!Number.isInteger(Number(date))) {
-    throw new BadRequestError(`${date} is invalid date`);
-  }
-
-  if (!entity) {
-    throw new NotFoundError(`An entity with date ${date} is not found`);
-  }
-
-  res.json(entity);
+  res.json(getValidationHandler(posts, date));
 }));
 
 postRouter.post(``, upload.none(), (req, res) => {
   const body = req.body;
 
-  if (!body.scale) {
-    throw new BadRequestError(`Scale is required`);
-  }
-
-  if (!body.effect) {
-    throw new BadRequestError(`Effect is required`);
-  }
-
-  res.send(body);
+  res.send(postValidationHandler(body));
 });
 
 module.exports = postRouter;
