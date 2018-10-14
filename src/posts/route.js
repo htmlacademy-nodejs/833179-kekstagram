@@ -1,8 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
-const postRouter = new Router();
 const asyncHandler = require(`express-async-handler`);
+const multer = require(`multer`);
+
+const postRouter = new Router();
+const upload = multer();
 
 const BadRequestError = require(`../errors/BadRequestError`);
 const NotFoundError = require(`../errors/NotFoundError`);
@@ -48,5 +51,19 @@ postRouter.get(`/:date`, asyncHandler(async (req, res) => {
 
   res.json(entity);
 }));
+
+postRouter.post(``, upload.none(), (req, res) => {
+  const body = req.body;
+
+  if (!body.scale) {
+    throw new BadRequestError(`Scale is required`);
+  }
+
+  if (!body.effect) {
+    throw new BadRequestError(`Effect is required`);
+  }
+
+  res.send(body);
+});
 
 module.exports = postRouter;
