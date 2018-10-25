@@ -54,7 +54,7 @@ const getComments = () => {
 };
 
 module.exports = () => ({
-  url: `https://picsum.photos/600/?random`,
+  image: `https://picsum.photos/600/?random`,
   scale: getRandomNumber(SCALE_MIN, SCALE_MAX),
   effect: EFFECT_VALUES[getRandomNumber(0, EFFECT_VALUES.length)],
   hashtags: getHashTags(),

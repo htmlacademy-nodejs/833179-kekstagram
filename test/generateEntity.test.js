@@ -17,12 +17,12 @@ const isInRange = (max, min = 0) => (item) => item <= max && item >= min;
 const isLengthInRange = (max, min = 0) => (item) => item.length <= max && item.length >= min;
 
 describe(`generateEntity`, () => {
-  describe(`#url`, () => {
+  describe(`#image`, () => {
     it(`should be string`, () => {
-      assert.ok(isString(currentEntity.url));
+      assert.ok(isString(currentEntity.image));
     });
-    it(`should be valid url`, () => {
-      assert.ok(validUrl.isUri(currentEntity.url));
+    it(`should be valid image`, () => {
+      assert.ok(validUrl.isUri(currentEntity.image));
     });
   });
   describe(`#scale`, () => {

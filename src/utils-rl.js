@@ -15,6 +15,7 @@ const rlp = (question, cb) => new Promise((resolve, reject) => {
 const closeRl = (message) => () => {
   console.log(message);
   rl.close();
+  process.exit(0);
 };
 
 const affirmativeResponses = [`y`, `yes`];

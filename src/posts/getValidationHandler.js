@@ -1,37 +1,48 @@
 'use strict';
 
-const BadRequestError = require(`../errors/BadRequestError`);
-const NotFoundError = require(`../errors/NotFoundError`);
 const validate = require(`../validate/index`);
-const {
-  DATE_MIN,
-  DATE_MAX,
-} = require(`../generateEntitySettings`);
 
-const config = {
-  date: [
-    `required`,
-    `numeric`,
-    [`minValue`, DATE_MIN],
-    [`maxValue`, DATE_MAX],
-  ],
-};
+const getOneValidationHandler = (date) => new Promise((resolve, reject) => {
+  const config = {
+    date: [
+      `required`,
+      `numeric`,
+    ],
+  };
 
-const getValidationHandler = (posts, date) => {
   const errors = validate(config, {date});
 
   if (errors) {
     const firstInvalidField = Object.values(errors)[0];
-    throw new BadRequestError(firstInvalidField[0]);
+    reject(firstInvalidField[0]);
   }
 
-  const entity = posts.find((item) => item.date === Number(date));
+  resolve();
+});
 
-  if (!entity) {
-    throw new NotFoundError(`An entity with date ${date} is not found`);
+const getAllValidationHandler = (params) => new Promise((resolve, reject) => {
+  const config = {
+    limit: [
+      `numeric`,
+      [`minValue`, 0],
+    ],
+    skip: [
+      `numeric`,
+      [`minValue`, 0],
+    ],
+  };
+
+  const errors = validate(config, params);
+
+  if (errors) {
+    const firstInvalidField = Object.values(errors)[0];
+    reject(firstInvalidField[0]);
   }
 
-  return entity;
+  resolve();
+});
+
+module.exports = {
+  getOneValidationHandler,
+  getAllValidationHandler,
 };
-
-module.exports = getValidationHandler;

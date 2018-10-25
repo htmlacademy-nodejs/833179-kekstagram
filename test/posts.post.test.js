@@ -2,10 +2,14 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
+const express = require(`express`);
+
+const postsStoreMock = require(`./mock/posts-store-mock`);
+const imagesStoreMock = require(`./mock/images-store-mock`);
+const postsRoute = require(`../src/posts/route`)(postsStoreMock, imagesStoreMock);
 
 const {CODE_BAD_REQUEST} = require(`../src/errors/codes`);
 
-const {app} = require(`../app`);
 const {
   SCALE_MIN,
   SCALE_MAX,
@@ -14,6 +18,16 @@ const {
   HASHTAG_STRING_MAX,
 } = require(`../src/generateEntitySettings`);
 const {newArray} = require(`../src/utils`);
+
+const errorHandler = require(`../src/errors/errorHandler`);
+const notFoundErrorHandler = require(`../src/errors/notFoundErrorHandler`);
+
+const app = express();
+
+app.use(`/api/posts`, postsRoute);
+
+app.use(notFoundErrorHandler);
+app.use(errorHandler);
 
 describe(`POST /api/posts`, () => {
   describe(`/`, () => {
