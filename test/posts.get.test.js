@@ -2,10 +2,23 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
-
-const {app} = require(`../app`);
+const express = require(`express`);
 
 const generateEntity = require(`../src/generateEntity`);
+
+const postsStoreMock = require(`./mock/posts-store-mock`);
+const imagesStoreMock = require(`./mock/images-store-mock`);
+const postsRoute = require(`../src/posts/route`)(postsStoreMock, imagesStoreMock);
+
+const errorHandler = require(`../src/errors/errorHandler`);
+const notFoundErrorHandler = require(`../src/errors/notFoundErrorHandler`);
+
+const app = express();
+
+app.use(`/api/posts`, postsRoute);
+
+app.use(notFoundErrorHandler);
+app.use(errorHandler);
 
 const {
   DATE_MIN,
@@ -35,13 +48,12 @@ describe(`GET /api/posts`, () => {
     it(`should get posts with structure of object given by 'generateEntity' function`, async () => {
       const response = await request(app).get(`/api/posts`);
 
-      assert.deepEqual(Object.keys(response.body[0]), Object.keys(generateEntity()));
+      assert.deepEqual(Object.keys(response.body.data[0]), Object.keys(generateEntity()));
     });
     it(`should get posts with default length if limit and skip are not specified`, async () => {
-      const defeultLength = DEFAULT_LIMIT - DEFAULT_SKIP;
       const response = await request(app).get(`/api/posts`);
 
-      assert.equal(response.body.length, defeultLength);
+      assert.equal(response.body.data.length, DEFAULT_LIMIT);
     });
     it(`should get posts with specified length (limit) if it's less than default`, async () => {
       const limit = DEFAULT_LIMIT - 1;
@@ -50,16 +62,20 @@ describe(`GET /api/posts`, () => {
         .get(`/api/posts`)
         .query({limit});
 
-      assert.equal(response.body.length, length);
+      assert.equal(response.body.data.length, length);
     });
-    it(`should get posts with default length (limit) if it's more than entity length`, async () => {
-      const limit = ENTITY_LENGTH + 1;
-      const length = DEFAULT_LIMIT - DEFAULT_SKIP;
-      const response = await request(app)
+    it(`should get posts with specified length (limit) despite skip value`, async () => {
+      const req1skip = 0;
+      const req2skip = 1;
+      const limit = 5;
+      const response1 = await request(app)
         .get(`/api/posts`)
-        .query({limit});
+        .query({limit, skip: req1skip});
+      const response2 = await request(app)
+        .get(`/api/posts`)
+        .query({limit, skip: req2skip});
 
-      assert.equal(response.body.length, length);
+      assert.equal(response1.body.data.length, response2.body.data.length);
     });
     it(`should get posts with indexes from 0 to limit`, async () => {
       const skip = 0;
@@ -73,33 +89,8 @@ describe(`GET /api/posts`, () => {
         .query({limit: req2limit, skip});
 
       assert.deepEqual(
-          response1.body,
-          response2.body.slice(0, req1limit)
-      );
-    });
-    it(`should skip posts with specified amount`, async () => {
-      const skip = 1;
-      const length = DEFAULT_LIMIT - skip;
-      const response = await request(app)
-        .get(`/api/posts`)
-        .query({skip});
-
-      assert.equal(response.body.length, length);
-    });
-    it(`should get posts with indexes from skip to 5`, async () => {
-      const req1skip = 1;
-      const req2skip = 0;
-      const limit = 5;
-      const response1 = await request(app)
-        .get(`/api/posts`)
-        .query({limit, skip: req1skip});
-      const response2 = await request(app)
-        .get(`/api/posts`)
-        .query({limit, skip: req2skip});
-
-      assert.deepEqual(
-          response1.body,
-          response2.body.slice(req1skip)
+          response1.body.data,
+          response2.body.data.slice(0, req1limit)
       );
     });
   });
@@ -108,28 +99,28 @@ describe(`GET /api/posts`, () => {
       const allPosts = await request(app).get(`/api/posts`);
 
       return request(app)
-        .get(`/api/posts/${allPosts.body[0].date}`)
+        .get(`/api/posts/${allPosts.body.data[0].date}`)
         .expect(200);
     });
     it(`should get response in JSON format`, async () => {
       const allPosts = await request(app).get(`/api/posts`);
 
       return request(app)
-        .get(`/api/posts/${allPosts.body[0].date}`)
+        .get(`/api/posts/${allPosts.body.data[0].date}`)
         .expect(`Content-Type`, /json/);
     });
     it(`should get post with structure of object given by 'generateEntity' function`, async () => {
       const allPosts = await request(app).get(`/api/posts`);
-      const response = await request(app).get(`/api/posts/${allPosts.body[0].date}`);
+      const response = await request(app).get(`/api/posts/${allPosts.body.data[0].date}`);
 
       assert.deepEqual(Object.keys(response.body), Object.keys(generateEntity()));
     });
     it(`should get post with specified date`, async () => {
       const index = 0;
       const allPosts = await request(app).get(`/api/posts`);
-      const response = await request(app).get(`/api/posts/${allPosts.body[index].date}`);
+      const response = await request(app).get(`/api/posts/${allPosts.body.data[index].date}`);
 
-      assert.deepEqual(allPosts.body[index], response.body);
+      assert.deepEqual(allPosts.body.data[index], response.body);
     });
     it(`should get response code with 400 if date is invalid`, () => {
       return request(app)
@@ -150,7 +141,7 @@ describe(`GET /api/posts`, () => {
       const allPosts = await request(app).get(`/api/posts`);
 
       return request(app)
-        .get(`/api/posts/${allPosts.body[0].date - 1}`) // actually it may fail, but probability is very low
+        .get(`/api/posts/${allPosts.body.data[0].date - 1}`) // actually it may fail, but probability is very low
         .expect(CODE_NOT_FOUND);
     });
   });

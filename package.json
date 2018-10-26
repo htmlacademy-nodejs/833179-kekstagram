@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test:lint": "eslint .",
-    "test:mocha": "mocha",
-    "test": "npm run test:lint && npm run test:mocha"
+    "test:mocha": "mocha --exit",
+    "test": "npm run test:lint && npm run test:mocha",
+    "db": "mongod --port 27017 --dbpath=./data",
+    "server": "node ./index.js --server"
   },
   "husky": {
     "hooks": {
@@ -37,10 +39,14 @@
   },
   "dependencies": {
     "body-parser": "1.18.3",
+    "buffer-to-stream": "1.0.0",
     "colors": "1.3.2",
+    "dotenv": "6.1.0",
     "express": "4.16.4",
     "express-async-handler": "1.1.4",
     "lorem-ipsum": "2.0.0-alpha.2",
-    "multer": "1.4.1"
+    "mongodb": "3.1.8",
+    "multer": "1.4.1",
+    "valid-filename": "2.0.1"
   }
 }

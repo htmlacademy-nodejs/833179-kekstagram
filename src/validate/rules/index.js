@@ -9,6 +9,7 @@ const maxElements = require(`./maxElements`);
 const maxValue = require(`./maxValue`);
 const minValue = require(`./minValue`);
 const numeric = require(`./numeric`);
+const filename = require(`./filename`);
 
 module.exports = {
   array,
@@ -20,4 +21,5 @@ module.exports = {
   maxValue,
   minValue,
   numeric,
+  filename,
 };
