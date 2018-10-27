@@ -1,6 +1,9 @@
 'use strict';
 
-const DEFAULT_PORT = 3000;
+const {
+  SERVER_PORT,
+  SERVER_HOST
+} = process.env;
 
 const express = require(`express`);
 const bodyParser = require(`body-parser`);
@@ -21,10 +24,10 @@ app.use(notFoundErrorHandler);
 app.use(errorHandler);
 
 const runServer = (customPort) => {
-  const port = customPort && Number.isInteger(customPort) ? customPort : DEFAULT_PORT;
+  const port = customPort && Number.isInteger(customPort) ? customPort : SERVER_PORT;
 
   app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Server running at http://${SERVER_HOST}${port}/`);
   });
 };
 
