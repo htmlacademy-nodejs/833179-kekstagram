@@ -1,7 +1,7 @@
 'use strict';
 
-const array = require(`./array`);
-const elements = require(`./elements`);
+const custom = require(`./custom`);
+const image = require(`./image`);
 const included = require(`./included`);
 const required = require(`./required`);
 const max = require(`./max`);
@@ -9,11 +9,10 @@ const maxElements = require(`./maxElements`);
 const maxValue = require(`./maxValue`);
 const minValue = require(`./minValue`);
 const numeric = require(`./numeric`);
-const filename = require(`./filename`);
 
 module.exports = {
-  array,
-  elements,
+  custom,
+  image,
   included,
   required,
   max,
@@ -21,5 +20,4 @@ module.exports = {
   maxValue,
   minValue,
   numeric,
-  filename,
 };

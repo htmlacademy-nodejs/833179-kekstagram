@@ -31,6 +31,28 @@ const toPage = async (cursor, skip, limit) => {
   };
 };
 
+const createPostData = (body) => {
+  const date = Date.now();
+  const url = `/api/posts/${date}/image`;
+  const hashtags = body.hashtags && body.hashtags.split(` `).map((hashtag) => hashtag.substr(1));
+  const scale = Number(body[`effect-level`]);
+  const likes = 0;
+  const comments = [];
+  const effect = body.effect;
+  const description = body.description;
+
+  return {
+    url,
+    description,
+    effect,
+    hashtags,
+    comments,
+    likes,
+    scale,
+    date,
+  };
+};
+
 module.exports = (router) => {
   router.get(``, asyncHandler(async (req, res) => {
     const limit = req.query.limit || DEFAULT_LIMIT;
@@ -45,13 +67,10 @@ module.exports = (router) => {
     res.send(await toPage(await router.postsStore.getAllPosts(), Number(skip), Number(limit)));
   }));
 
-  router.post(``, jsonParser, upload.single(`image`), asyncHandler(async (req, res) => {
+  router.post(``, jsonParser, upload.single(`filename`), asyncHandler(async (req, res) => {
     const body = req.body;
-    const image = req.file;
 
-    if (image) {
-      body.image = {name: image.originalname};
-    }
+    body.filename = req.file && req.file.buffer;
 
     try {
       await postValidationHandler(body);
@@ -59,13 +78,12 @@ module.exports = (router) => {
       throw new BadRequestError(error);
     }
 
-    const result = await router.postsStore.save(body);
+    const data = createPostData(body);
+    const result = await router.postsStore.save(data);
     const insertedId = result.insertedId;
 
-    if (image) {
-      await router.imageStore.save(insertedId, toStream(image.buffer));
-    }
+    await router.imageStore.save(insertedId, toStream(body.filename));
 
-    res.send(body);
+    res.send(data);
   }));
 };

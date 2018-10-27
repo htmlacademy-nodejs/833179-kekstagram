@@ -1,7 +1,6 @@
 'use strict';
 
 const request = require(`supertest`);
-const assert = require(`assert`);
 const express = require(`express`);
 
 const postsStoreMock = require(`./mock/posts-store-mock`);
@@ -29,208 +28,144 @@ app.use(`/api/posts`, postsRoute);
 app.use(notFoundErrorHandler);
 app.use(errorHandler);
 
+// Sending an image in 'filename' field of POST request to '/api/posts' is required,
+// therefore a request in JSON format is not valid and will always fail.
+// And although it can accept data in this format, testing it is not possible
+
 describe(`POST /api/posts`, () => {
   describe(`/`, () => {
-    it(`should send back the same json-object`, async () => {
-      const body = {
-        scale: 50,
-        effect: `none`,
-        hashtags: [`#gathsah`],
-        description: `Test post`,
-      };
-
-      const response = await request(app)
+    it(`should fail if no filename`, async () => {
+      await request(app)
         .post(`/api/posts`)
-        .set(`Accept`, `application/json`)
-        .set(`Content-Type`, `application/json`)
-        .send(body);
-
-      assert.deepEqual(body, response.body);
-    });
-    it(`should send back json-object with the same form-data fields`, async () => {
-      const body = {
-        scale: 50,
-        effect: `none`,
-        hashtags: [`#gathsah`],
-        description: `Test post`,
-      };
-
-      const response = await request(app)
-        .post(`/api/posts`)
-        .set(`Accept`, `application/json`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`scale`, body.scale)
-        .field(`effect`, body.effect)
-        .field(`hashtags[]`, body.hashtags)
-        .field(`description`, body.description);
-
-      assert.equal(body.scale, response.body.scale);
-      assert.equal(body.effect, response.body.effect);
-      assert.deepEqual(body.hashtags, response.body.hashtags);
-      assert.equal(body.description, response.body.description);
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .expect(CODE_BAD_REQUEST);
     });
-    it(`should fail if no scale`, async () => {
-      const body = {
-        effect: `none`,
-      };
+    it(`should fail if filename is not a valid image`, async () => {
+      await request(app)
+        .post(`/api/posts`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .attach(`filename`, `test/assets/text.txt`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .expect(CODE_BAD_REQUEST);
+    });
+    it(`should pass if filename is a valid image`, async () => {
+      await request(app)
+        .post(`/api/posts`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .expect(200);
 
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
-        .expect(CODE_BAD_REQUEST);
-    });
-    it(`should fail if scale is not numeric`, async () => {
-      const body = {
-        scale: `abc`,
-        effect: `none`,
-      };
+        .attach(`filename`, `test/assets/image.jpeg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .expect(200);
 
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
-        .expect(CODE_BAD_REQUEST);
+        .attach(`filename`, `test/assets/image.png`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .expect(200);
     });
-    it(`should fail if scale is less than SCALE_MIN`, async () => {
-      const body = {
-        scale: SCALE_MIN - 1,
-        effect: `none`,
-      };
-
+    it(`should fail if no effect-level`, async () => {
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
         .expect(CODE_BAD_REQUEST);
     });
-    it(`should fail if scale is more than SCALE_MAX`, async () => {
-      const body = {
-        scale: SCALE_MAX + 1,
-        effect: `none`,
-      };
-
+    it(`should fail if effect-level is not numeric`, async () => {
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, `abc`)
         .expect(CODE_BAD_REQUEST);
-
+    });
+    it(`should fail if effect-level is less than SCALE_MIN`, async () => {
       await request(app)
         .post(`/api/posts`)
-        .send(body)
+        .set(`Content-Type`, `multipart/form-data`)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, SCALE_MIN - 1)
+        .expect(CODE_BAD_REQUEST);
+    });
+    it(`should fail if effect-level is more than SCALE_MAX`, async () => {
+      await request(app)
+        .post(`/api/posts`)
+        .set(`Content-Type`, `multipart/form-data`)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, SCALE_MAX + 1)
         .expect(CODE_BAD_REQUEST);
     });
     it(`should fail if no effect`, async () => {
-      const body = {
-        scale: 50,
-      };
-
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`scale`, body.scale)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect-level`, 50)
         .expect(CODE_BAD_REQUEST);
     });
     it(`should fail if effect is not one of predefined values`, async () => {
-      const body = {
-        scale: 50,
-        effect: `someRandomValue`,
-      };
-
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `someRandomValue`)
+        .field(`effect-level`, 50)
         .expect(CODE_BAD_REQUEST);
     });
     it(`should fail if description length is longer than DESCRIPTION_MAX`, async () => {
-      const body = {
-        scale: 50,
-        effect: `none`,
-        description: newArray(DESCRIPTION_MAX + 1).fill(`a`).join(``),
-      };
-
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .field(`scale`, body.description)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .field(`description`, newArray(DESCRIPTION_MAX + 1).fill(`a`).join(``))
         .expect(CODE_BAD_REQUEST);
     });
     it(`should fail if amount of hashtags is more than HASHTAG_ELEMENT_MAX`, async () => {
-      const body = {
-        scale: 50,
-        effect: `none`,
-        hashtags: newArray(HASHTAG_ELEMENT_MAX + 1).fill(`a`),
-      };
-
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .field(`hashtags[]`, body.hashtags)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .field(`hashtags`, newArray(HASHTAG_ELEMENT_MAX + 1).fill(`#a`).join(` `))
         .expect(CODE_BAD_REQUEST);
-
+    });
+    it(`should fail if hashtag doesn't begin with #`, async () => {
       await request(app)
         .post(`/api/posts`)
-        .send(body)
+        .set(`Content-Type`, `multipart/form-data`)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .field(`hashtags`, `a`)
         .expect(CODE_BAD_REQUEST);
     });
     it(`should fail if an element of hashtags array has more characters than HASHTAG_STRING_MAX`, async () => {
-      const body = {
-        scale: 50,
-        effect: `none`,
-        hashtags: [newArray(HASHTAG_STRING_MAX + 1).fill(`a`).join(``)],
-      };
-
       await request(app)
         .post(`/api/posts`)
         .set(`Content-Type`, `multipart/form-data`)
-        .field(`effect`, body.effect)
-        .field(`scale`, body.scale)
-        .field(`hashtags[]`, body.hashtags)
-        .expect(CODE_BAD_REQUEST);
-
-      await request(app)
-        .post(`/api/posts`)
-        .send(body)
+        .attach(`filename`, `test/assets/image.jpg`)
+        .field(`effect`, `none`)
+        .field(`effect-level`, 50)
+        .field(`hashtags`, `#${newArray(HASHTAG_STRING_MAX + 1).fill(`a`).join(``)}`)
         .expect(CODE_BAD_REQUEST);
     });
   });

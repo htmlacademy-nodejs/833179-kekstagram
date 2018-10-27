@@ -53,13 +53,17 @@ const getComments = () => {
     .map(() => getRandomText(2, COMMENTS_STRING_MAX));
 };
 
-module.exports = () => ({
-  image: `https://picsum.photos/600/?random`,
-  scale: getRandomNumber(SCALE_MIN, SCALE_MAX),
-  effect: EFFECT_VALUES[getRandomNumber(0, EFFECT_VALUES.length)],
-  hashtags: getHashTags(),
-  description: getRandomText(2, DESCRIPTION_MAX),
-  likes: getRandomNumber(LIKES_MIN, LIKES_MAX),
-  comments: getComments(),
-  date: getRandomNumber(DATE_MIN, DATE_MAX),
-});
+module.exports = () => {
+  const date = getRandomNumber(DATE_MIN, DATE_MAX);
+
+  return {
+    url: `/api/posts/${date}/image`,
+    effect: EFFECT_VALUES[getRandomNumber(0, EFFECT_VALUES.length)],
+    scale: getRandomNumber(SCALE_MIN, SCALE_MAX),
+    hashtags: getHashTags(),
+    description: getRandomText(2, DESCRIPTION_MAX),
+    likes: getRandomNumber(LIKES_MIN, LIKES_MAX),
+    comments: getComments(),
+    date,
+  };
+};

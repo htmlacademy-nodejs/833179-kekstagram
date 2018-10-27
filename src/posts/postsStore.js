@@ -18,7 +18,7 @@ class PostStore {
   }
 
   async getPost(date) {
-    return (await this.collection).findOne({date});
+    return (await this.collection).findOne({date: Number(date)});
   }
 
   async getAllPosts() {
