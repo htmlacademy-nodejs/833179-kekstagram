@@ -37,6 +37,14 @@ const toPage = async (cursor, skip, limit) => {
   };
 };
 
+const ALLOW_CORS = (req, res, next) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.header(`Access-Control-Allow-Headers`, `Origin, X-Requested-With, Content-Type, Accept`);
+  next();
+};
+
+postRouter.use(ALLOW_CORS);
+
 postRouter.get(``, asyncHandler(async (req, res) => {
   const limit = req.query.limit || DEFAULT_LIMIT;
   const skip = req.query.skip || DEFAULT_SKIP;
