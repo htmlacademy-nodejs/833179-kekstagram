@@ -16,6 +16,8 @@ const postRouter = require(`./src/posts/route`);
 const errorHandler = require(`./src/errors/errorHandler`);
 const notFoundErrorHandler = require(`./src/errors/notFoundErrorHandler`);
 
+const logger = require(`./src/logger`);
+
 app.use(express.static(`static`));
 app.use(bodyParser.json());
 app.use(`/api/posts/`, postRouter(postsStore, imagesStore));
@@ -27,7 +29,7 @@ const runServer = (customPort) => {
   const port = customPort && Number.isInteger(customPort) ? customPort : SERVER_PORT;
 
   app.listen(port, () => {
-    console.log(`Server running at http://${SERVER_HOST}${port}/`);
+    logger.info(`Server running at http://${SERVER_HOST}${port}/`);
   });
 };
 

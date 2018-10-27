@@ -2,12 +2,19 @@
 
 const {CODE_INTERNAL_ERROR} = require(`./codes`);
 
+const logger = require(`../logger`);
+
 const errorHandler = (err, req, res, _next) => {
   if (err) {
-    console.error(err);
+    const isInternalError = !err.code;
+
+    if (isInternalError) {
+      logger.error(err);
+    }
+
     res
-      .status(err.code || CODE_INTERNAL_ERROR)
-      .send(err.code ? err.message : `Internal server error`);
+      .status(isInternalError ? CODE_INTERNAL_ERROR : err.code)
+      .send(isInternalError ? `Internal server error` : err.message);
   }
 };
 

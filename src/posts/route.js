@@ -12,6 +12,7 @@ const toStream = require(`buffer-to-stream`);
 
 const BadRequestError = require(`../errors/BadRequestError`);
 const NotFoundError = require(`../errors/NotFoundError`);
+const logger = require(`../logger`);
 const {
   getOneValidationHandler,
   getAllValidationHandler,
@@ -91,11 +92,11 @@ postRouter.get(`/:date/image`, asyncHandler(async (req, res) => {
   res.header(`Content-Type`, `image/jpeg`);
   res.header(`Content-Length`, image.info.length);
 
-  res.on(`error`, (e) => console.error(e));
+  res.on(`error`, (e) => logger.error(e));
   res.on(`end`, () => res.end());
 
   const stream = image.stream;
-  stream.on(`error`, (e) => console.error(e));
+  stream.on(`error`, (e) => logger.error(e));
   stream.on(`end`, () => res.end());
   stream.pipe(res);
 }));
