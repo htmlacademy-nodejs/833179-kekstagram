@@ -34,8 +34,7 @@
     "husky": "1.0.0",
     "lint-staged": "7.3.0",
     "mocha": "5.2.0",
-    "supertest": "3.3.0",
-    "valid-url": "1.0.9"
+    "supertest": "3.3.0"
   },
   "dependencies": {
     "body-parser": "1.18.3",
@@ -44,9 +43,10 @@
     "dotenv": "6.1.0",
     "express": "4.16.4",
     "express-async-handler": "1.1.4",
+    "file-type": "10.1.0",
     "lorem-ipsum": "2.0.0-alpha.2",
     "mongodb": "3.1.8",
     "multer": "1.4.1",
-    "valid-filename": "2.0.1"
+    "winston": "3.1.0"
   }
 }

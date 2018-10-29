@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require(`../database/db`);
+const logger = require(`../logger`);
 
 const setupCollection = async () => {
   const dBase = await db;
@@ -17,7 +18,7 @@ class PostStore {
   }
 
   async getPost(date) {
-    return (await this.collection).findOne({date});
+    return (await this.collection).findOne({date: Number(date)});
   }
 
   async getAllPosts() {
@@ -32,5 +33,5 @@ class PostStore {
 
 module.exports = new PostStore(
     setupCollection().
-      catch((e) => console.error(`Failed to set up "posts"-collection`, e))
+      catch((e) => logger.error(`Failed to set up "posts"-collection`, e))
 );

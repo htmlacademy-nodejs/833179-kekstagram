@@ -2,8 +2,6 @@
 
 const assert = require(`assert`);
 
-const validUrl = require(`valid-url`);
-
 const {removeDupicateStringsFromArray} = require(`../src/utils.js`);
 
 const generateEntity = require(`../src/generateEntity`);
@@ -17,12 +15,9 @@ const isInRange = (max, min = 0) => (item) => item <= max && item >= min;
 const isLengthInRange = (max, min = 0) => (item) => item.length <= max && item.length >= min;
 
 describe(`generateEntity`, () => {
-  describe(`#image`, () => {
+  describe(`#url`, () => {
     it(`should be string`, () => {
-      assert.ok(isString(currentEntity.image));
-    });
-    it(`should be valid image`, () => {
-      assert.ok(validUrl.isUri(currentEntity.image));
+      assert.ok(isString(currentEntity.url));
     });
   });
   describe(`#scale`, () => {

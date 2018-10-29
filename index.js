@@ -1,5 +1,7 @@
 'use strict';
 
+require(`dotenv`).config();
+
 const commandData = require(`./src/commands/index`);
 const generateEntity = require(`./src/generateEntityReadline`).askToGenerateEntityHandler;
 

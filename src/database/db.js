@@ -1,14 +1,21 @@
 'use strict';
 
-require(`dotenv`).config();
+const {
+  DB_HOST,
+  DB_PORT,
+  DB_NAME
+} = process.env;
+
 const {MongoClient} = require(`mongodb`);
 
-const url = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}`;
+const logger = require(`../logger`);
+
+const url = `mongodb://${DB_HOST}:${DB_PORT}`;
 
 module.exports = MongoClient
   .connect(url)
-  .then((client) => client.db(`kekstagram`))
+  .then((client) => client.db(DB_NAME))
   .catch((e) => {
-    console.error(`Failed to connect to MongoDB`, e);
+    logger.error(`Failed to connect to MongoDB`, e);
     process.exit(1);
   });
