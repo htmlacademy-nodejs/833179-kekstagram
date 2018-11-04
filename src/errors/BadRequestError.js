@@ -5,6 +5,7 @@ const {CODE_BAD_REQUEST} = require(`./codes`);
 class BadRequestError extends Error {
   constructor(message) {
     super(message);
+    this.errors = message;
     this.code = CODE_BAD_REQUEST;
   }
 }

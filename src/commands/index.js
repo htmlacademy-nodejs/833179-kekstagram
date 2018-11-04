@@ -1,17 +1,15 @@
 'use strict';
 
 const author = require(`./author`);
-const description = require(`./description`);
+const fill = require(`./fill`);
 const help = require(`./help`);
-const license = require(`./license`);
 const server = require(`./server`);
 const version = require(`./version`);
 
 module.exports = {
   author,
-  description,
+  fill,
   help,
-  license,
   server,
   version,
 };

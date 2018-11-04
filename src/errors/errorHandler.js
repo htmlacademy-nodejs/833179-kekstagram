@@ -7,14 +7,14 @@ const logger = require(`../logger`);
 const errorHandler = (err, req, res, _next) => {
   if (err) {
     const isInternalError = !err.code;
+    const status = isInternalError ? CODE_INTERNAL_ERROR : err.code;
+    const errors = isInternalError ? `Internal server error` : err.errors || err.message;
 
     if (isInternalError) {
       logger.error(err);
     }
 
-    res
-      .status(isInternalError ? CODE_INTERNAL_ERROR : err.code)
-      .send(isInternalError ? `Internal server error` : err.message);
+    res.status(status).json({errors});
   }
 };
 

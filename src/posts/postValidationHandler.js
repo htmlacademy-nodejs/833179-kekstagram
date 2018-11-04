@@ -38,7 +38,7 @@ const postValidationHandler = (data) => new Promise((resolve, reject) => {
       }],
       // every hashtag starts with '#'
       [`custom`, {
-        validator: (string) => string.split(` `).every((elem) => elem[0] === `#`),
+        validator: (string) => string.split(` `).filter((elem) => elem).every((elem) => elem[0] === `#`),
         message: () => `All hashtags must begin with '#'`,
       }],
       // max hashtag length
@@ -57,8 +57,7 @@ const postValidationHandler = (data) => new Promise((resolve, reject) => {
   const errors = validate(config, data);
 
   if (errors) {
-    const firstInvalidField = Object.values(errors)[0];
-    reject(firstInvalidField[0]);
+    reject(errors);
   }
 
   resolve();
