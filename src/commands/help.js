@@ -3,8 +3,7 @@
 const colors = require(`colors`);
 
 const author = require(`./author`);
-const description = require(`./description`);
-const license = require(`./license`);
+const fill = require(`./fill`);
 const server = require(`./server`);
 const version = require(`./version`);
 
@@ -19,9 +18,8 @@ const help = {
 
 const commandData = {
   author,
-  description,
+  fill,
   help,
-  license,
   server,
   version,
 };
