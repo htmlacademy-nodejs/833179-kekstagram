@@ -2,7 +2,7 @@
 
 const elements = {
   validator: (field, {validator}) => validator(field),
-  message: (field, {message}) => message(field),
+  message: (field, fieldValue, {message}) => message(field, fieldValue),
 };
 
 module.exports = elements;
