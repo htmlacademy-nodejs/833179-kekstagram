@@ -7,17 +7,17 @@ const {
   readFile,
   unlinkFile,
   writeFile,
-} = require(`./utils-fs`);
+} = require(`./fs`);
 const {
   newArray,
   removeDupicateStringsFromArray,
-} = require(`./utils-js`);
+} = require(`./js`);
 const {
   askClosedQuestion,
   askClosedQuestionCb,
   closeRl,
   rlp,
-} = require(`./utils-rl`);
+} = require(`./rl`);
 
 module.exports = {
   askClosedQuestion,
