@@ -4,20 +4,6 @@ const db = require(`../database/db`);
 const mongodb = require(`mongodb`);
 
 class ImageStore {
-  async _getBucket() {
-    if (this._bucket) {
-      return this._bucket;
-    }
-
-    const dBase = await db;
-    this._bucket = new mongodb.GridFSBucket(dBase, {
-      chunkSizeBytes: 512 * 1024,
-      bucketName: `images`
-    });
-
-    return this._bucket;
-  }
-
   async get(filename) {
     const bucket = await this._getBucket();
     const results = await (bucket).find({filename}).toArray();
@@ -38,6 +24,20 @@ class ImageStore {
         .on(`error`, reject)
         .on(`finish`, resolve);
     });
+  }
+
+  async _getBucket() {
+    if (this._bucket) {
+      return this._bucket;
+    }
+
+    const dBase = await db;
+    this._bucket = new mongodb.GridFSBucket(dBase, {
+      chunkSizeBytes: 512 * 1024,
+      bucketName: `images`
+    });
+
+    return this._bucket;
   }
 }
 
