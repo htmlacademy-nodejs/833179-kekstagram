@@ -15,11 +15,11 @@ const {
   DESCRIPTION_MAX,
   HASHTAG_ELEMENT_MAX,
   HASHTAG_STRING_MAX,
-} = require(`../src/generateEntitySettings`);
+} = require(`../src/generate-entity-settings`);
 const {newArray} = require(`../src/utils`);
 
-const errorHandler = require(`../src/errors/errorHandler`);
-const notFoundErrorHandler = require(`../src/errors/notFoundErrorHandler`);
+const errorHandler = require(`../src/errors/error-handler`);
+const notFoundErrorHandler = require(`../src/errors/not-found-error-handler`);
 
 const app = express();
 

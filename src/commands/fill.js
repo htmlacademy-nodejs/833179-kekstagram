@@ -1,6 +1,6 @@
 'use strict';
 
-const generateEntity = require(`../../src/generateEntityReadline`).askToGenerateEntityHandler;
+const generateEntity = require(`../../src/generate-entity-readline`).askToGenerateEntityHandler;
 
 const fill = {
   name: `fill`,

@@ -3,9 +3,9 @@
 const asyncHandler = require(`express-async-handler`);
 
 const logger = require(`../../logger`);
-const BadRequestError = require(`../../errors/BadRequestError`);
-const NotFoundError = require(`../../errors/NotFoundError`);
-const {getOneValidationHandler} = require(`../getValidationHandler`);
+const BadRequestError = require(`../../errors/bad-request-error`);
+const NotFoundError = require(`../../errors/not-found-error`);
+const {getOneValidationHandler} = require(`../get-validation-handler`);
 
 module.exports = (router) => {
   router.get(`/:date`, asyncHandler(async (req, res) => {

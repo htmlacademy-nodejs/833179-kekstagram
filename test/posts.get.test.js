@@ -4,14 +4,14 @@ const request = require(`supertest`);
 const assert = require(`assert`);
 const express = require(`express`);
 
-const generateEntity = require(`../src/generateEntity`);
+const generateEntity = require(`../src/generate-entity`);
 
 const postsStoreMock = require(`./mock/posts-store-mock`);
 const imagesStoreMock = require(`./mock/images-store-mock`);
 const postsRoute = require(`../src/posts/route`)(postsStoreMock, imagesStoreMock);
 
-const errorHandler = require(`../src/errors/errorHandler`);
-const notFoundErrorHandler = require(`../src/errors/notFoundErrorHandler`);
+const errorHandler = require(`../src/errors/error-handler`);
+const notFoundErrorHandler = require(`../src/errors/not-found-error-handler`);
 
 const app = express();
 

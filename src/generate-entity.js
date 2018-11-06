@@ -2,7 +2,7 @@
 
 const loremIpsum = require(`lorem-ipsum`).loremIpsum;
 
-const {newArray, removeDupicateStringsFromArray} = require(`../src/utils.js`);
+const {newArray, removeDupicateStringsFromArray} = require(`./utils`);
 const {
   COMMENTS_ELEMENT_MAX,
   COMMENTS_ELEMENT_MIN,
@@ -18,7 +18,7 @@ const {
   LIKES_MIN,
   SCALE_MAX,
   SCALE_MIN,
-} = require(`./generateEntitySettings`);
+} = require(`./generate-entity-settings`);
 
 const getRandomNumber = (from, to) => Math.floor(Math.random() * (to - from)) + from;
 const getRandomText = (sentencesCount, characterLimit) => {

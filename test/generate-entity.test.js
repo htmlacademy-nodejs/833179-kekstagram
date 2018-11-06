@@ -2,10 +2,10 @@
 
 const assert = require(`assert`);
 
-const {removeDupicateStringsFromArray} = require(`../src/utils.js`);
+const {removeDupicateStringsFromArray} = require(`../src/utils`);
 
-const generateEntity = require(`../src/generateEntity`);
-const generateEntitySettings = require(`./../src/generateEntitySettings`);
+const generateEntity = require(`../src/generate-entity`);
+const generateEntitySettings = require(`./../src/generate-entity-settings`);
 const currentEntity = generateEntity();
 
 const isString = (item) => typeof item === `string`;

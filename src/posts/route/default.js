@@ -10,9 +10,9 @@ const {
   DEFAULT_SKIP,
 } = require(`../settings`);
 
-const BadRequestError = require(`../../errors/BadRequestError`);
-const {getAllValidationHandler} = require(`../getValidationHandler`);
-const postValidationHandler = require(`../postValidationHandler`);
+const BadRequestError = require(`../../errors/bad-request-error`);
+const {getAllValidationHandler} = require(`../get-validation-handler`);
+const postValidationHandler = require(`../post-validation-handler`);
 
 const upload = multer();
 const jsonParser = json();
