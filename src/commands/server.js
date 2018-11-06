@@ -1,8 +1,8 @@
 'use strict';
 
-const port = process.argv[3];
-
 const {runServer} = require(`../../app`);
+
+const port = process.argv[3];
 
 const server = {
   name: `server`,
