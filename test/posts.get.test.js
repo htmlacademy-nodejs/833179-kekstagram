@@ -40,7 +40,13 @@ describe(`GET /api/posts`, () => {
         .get(`/api/posts`)
         .expect(200);
     });
-    it(`should get response in JSON format`, () => {
+    it(`should get response in HTML format, if 'accept' contains 'text/html'`, () => {
+      return request(app)
+        .get(`/api/posts`)
+        .set(`Accept`, `text/html`)
+        .expect(`Content-Type`, /html/);
+    });
+    it(`should get response in JSON format in all other cases`, () => {
       return request(app)
         .get(`/api/posts`)
         .expect(`Content-Type`, /json/);
@@ -102,7 +108,15 @@ describe(`GET /api/posts`, () => {
         .get(`/api/posts/${allPosts.body.data[0].date}`)
         .expect(200);
     });
-    it(`should get response in JSON format`, async () => {
+    it(`should get response in HTML format, if 'accept' contains 'text/html'`, async () => {
+      const allPosts = await request(app).get(`/api/posts`);
+
+      return request(app)
+        .get(`/api/posts/${allPosts.body.data[0].date}`)
+        .set(`Accept`, `text/html`)
+        .expect(`Content-Type`, /html/);
+    });
+    it(`should get response in JSON format in all other cases`, async () => {
       const allPosts = await request(app).get(`/api/posts`);
 
       return request(app)

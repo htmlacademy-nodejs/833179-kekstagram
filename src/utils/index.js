@@ -9,6 +9,10 @@ const {
   writeFile,
 } = require(`./fs`);
 const {
+  isHTML,
+  prettyHtmlSettings,
+} = require(`./http`);
+const {
   newArray,
   removeDupicateStringsFromArray,
 } = require(`./js`);
@@ -26,7 +30,9 @@ module.exports = {
   contentTypes,
   doesFileExist,
   isDirectoryAccessible,
+  isHTML,
   newArray,
+  prettyHtmlSettings,
   readFile,
   removeDupicateStringsFromArray,
   rlp,

@@ -4,6 +4,8 @@ const {json} = require(`express`);
 const multer = require(`multer`);
 const asyncHandler = require(`express-async-handler`);
 const toStream = require(`buffer-to-stream`);
+const prettyHtml = require(`json-pretty-html`).default;
+const {isHTML, prettyHtmlSettings} = require(`../../utils`);
 
 const {
   DEFAULT_LIMIT,
@@ -64,7 +66,11 @@ module.exports = (router) => {
       throw new BadRequestError(error);
     }
 
-    res.send(await toPage(await router.postsStore.getAllPosts(), Number(skip), Number(limit)));
+    const data = await toPage(await router.postsStore.getAllPosts(), Number(skip), Number(limit));
+
+    res
+      .type(isHTML(req) ? `html` : `json`)
+      .send(isHTML(req) ? prettyHtml(data, prettyHtmlSettings) : data);
   }));
 
   router.post(``, jsonParser, upload.single(`filename`), asyncHandler(async (req, res) => {
