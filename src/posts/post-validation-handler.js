@@ -9,7 +9,7 @@ const {
   DESCRIPTION_MAX,
   HASHTAG_ELEMENT_MAX,
   HASHTAG_STRING_MAX,
-} = require(`../generateEntitySettings`);
+} = require(`../generate-entity-settings`);
 
 const postValidationHandler = (data) => new Promise((resolve, reject) => {
   const config = {

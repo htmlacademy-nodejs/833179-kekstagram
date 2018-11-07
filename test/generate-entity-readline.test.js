@@ -6,8 +6,8 @@ const {
   askAmountOfEntitiesCb,
   askFileNameCb,
   writeGeneretedDataToFile,
-} = require(`../src/generateEntityReadline`);
-const generateEntity = require(`../src/generateEntity`);
+} = require(`../src/generate-entity-readline`);
+const generateEntity = require(`../src/generate-entity`);
 
 const {
   doesFileExist,

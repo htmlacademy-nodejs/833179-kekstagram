@@ -9,12 +9,12 @@ const express = require(`express`);
 const bodyParser = require(`body-parser`);
 
 const app = express();
-const postsStore = require(`./src/posts/postsStore`);
-const imagesStore = require(`./src/posts/imagesStore`);
+const postsStore = require(`./src/posts/posts-store`);
+const imagesStore = require(`./src/posts/images-store`);
 const postRouter = require(`./src/posts/route`);
 
-const errorHandler = require(`./src/errors/errorHandler`);
-const notFoundErrorHandler = require(`./src/errors/notFoundErrorHandler`);
+const errorHandler = require(`./src/errors/error-handler`);
+const notFoundErrorHandler = require(`./src/errors/not-found-error-handler`);
 
 const logger = require(`./src/logger`);
 

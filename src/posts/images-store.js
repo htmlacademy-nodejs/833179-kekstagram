@@ -4,7 +4,29 @@ const db = require(`../database/db`);
 const mongodb = require(`mongodb`);
 
 class ImageStore {
-  async getBucket() {
+  async get(filename) {
+    const bucket = await this._getBucket();
+    const results = await (bucket).find({filename}).toArray();
+
+    const entity = results[0];
+
+    return entity
+      ? {info: entity, stream: bucket.openDownloadStreamByName(filename)}
+      : null;
+  }
+
+  async save(filename, stream) {
+    const bucket = await this._getBucket();
+
+    return new Promise((resolve, reject) => {
+      stream
+        .pipe(bucket.openUploadStream(filename))
+        .on(`error`, reject)
+        .on(`finish`, resolve);
+    });
+  }
+
+  async _getBucket() {
     if (this._bucket) {
       return this._bucket;
     }
@@ -16,28 +38,6 @@ class ImageStore {
     });
 
     return this._bucket;
-  }
-
-  async get(filename) {
-    const bucket = await this.getBucket();
-    const results = await (bucket).find({filename}).toArray();
-
-    const entity = results[0];
-
-    return entity
-      ? {info: entity, stream: bucket.openDownloadStreamByName(filename)}
-      : null;
-  }
-
-  async save(filename, stream) {
-    const bucket = await this.getBucket();
-
-    return new Promise((resolve, reject) => {
-      stream
-        .pipe(bucket.openUploadStream(filename))
-        .on(`error`, reject)
-        .on(`finish`, resolve);
-    });
   }
 }
 

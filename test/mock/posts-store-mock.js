@@ -1,9 +1,9 @@
 'use strict';
 
 const Cursor = require(`./cursor-mock`);
-const generateEntity = require(`../../src/generateEntity`);
+const generateEntity = require(`../../src/generate-entity`);
 const {newArray} = require(`./../../src/utils`);
-const {ENTITY_LENGTH} = require(`./../../src/posts/settings.js`);
+const {ENTITY_LENGTH} = require(`./../../src/posts/settings`);
 
 class PostStoreMock {
   constructor(data) {

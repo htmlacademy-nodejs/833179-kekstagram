@@ -11,7 +11,7 @@ const {
   rlp,
   writeFile,
 } = require(`./utils`);
-const generateEntity = require(`./generateEntity`);
+const generateEntity = require(`./generate-entity`);
 
 const askToGenerateEntityHandler =
   (...args) => askToGenerateEntity(...args)

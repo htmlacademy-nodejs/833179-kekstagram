@@ -1,11 +1,13 @@
 'use strict';
 
 const asyncHandler = require(`express-async-handler`);
+const prettyHtml = require(`json-pretty-html`).default;
 
 const logger = require(`../../logger`);
-const BadRequestError = require(`../../errors/BadRequestError`);
-const NotFoundError = require(`../../errors/NotFoundError`);
-const {getOneValidationHandler} = require(`../getValidationHandler`);
+const BadRequestError = require(`../../errors/bad-request-error`);
+const NotFoundError = require(`../../errors/not-found-error`);
+const {getOneValidationHandler} = require(`../get-validation-handler`);
+const {isHTML, prettyHtmlSettings} = require(`../../utils`);
 
 module.exports = (router) => {
   router.get(`/:date`, asyncHandler(async (req, res) => {
@@ -23,7 +25,9 @@ module.exports = (router) => {
       throw new NotFoundError(`An entity with date ${date} is not found`);
     }
 
-    res.send(entity);
+    res
+      .type(isHTML(req) ? `html` : `json`)
+      .send(isHTML(req) ? prettyHtml(entity, prettyHtmlSettings) : entity);
   }));
 
   router.get(`/:date/image`, asyncHandler(async (req, res) => {

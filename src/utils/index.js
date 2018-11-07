@@ -7,17 +7,21 @@ const {
   readFile,
   unlinkFile,
   writeFile,
-} = require(`./utils-fs`);
+} = require(`./fs`);
+const {
+  isHTML,
+  prettyHtmlSettings,
+} = require(`./http`);
 const {
   newArray,
   removeDupicateStringsFromArray,
-} = require(`./utils-js`);
+} = require(`./js`);
 const {
   askClosedQuestion,
   askClosedQuestionCb,
   closeRl,
   rlp,
-} = require(`./utils-rl`);
+} = require(`./rl`);
 
 module.exports = {
   askClosedQuestion,
@@ -26,7 +30,9 @@ module.exports = {
   contentTypes,
   doesFileExist,
   isDirectoryAccessible,
+  isHTML,
   newArray,
+  prettyHtmlSettings,
   readFile,
   removeDupicateStringsFromArray,
   rlp,
